@@ -1,6 +1,6 @@
 package com.dev.member.controller;
 
-import com.dev.member.dto.MemberInfoResDto;
+import com.dev.member.dto.MemberResDto;
 import com.dev.member.service.MemberService;
 import com.dev.utils.response.BaseException;
 import com.dev.utils.response.BaseResponse;
@@ -17,20 +17,20 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/me")
-    public BaseResponse<MemberInfoResDto> getMyMemberInfo(){
+    public BaseResponse<MemberResDto> getMyMemberInfo(){
         try{
-            MemberInfoResDto myInfo = memberService.getMyInfo();
-            return new BaseResponse<MemberInfoResDto>(myInfo);
+            MemberResDto myInfo = memberService.getMyInfo();
+            return new BaseResponse<MemberResDto>(myInfo);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
     }
 
     @GetMapping("/{email}")
-    public BaseResponse<MemberInfoResDto> getMemberInfo(@PathVariable String email){
+    public BaseResponse<MemberResDto> getMemberInfo(@PathVariable String email){
         try{
-            MemberInfoResDto memberInfo = memberService.getMemberInfo(email);
-            return new BaseResponse<MemberInfoResDto>(memberInfo);
+            MemberResDto memberInfo = memberService.getMemberInfo(email);
+            return new BaseResponse<MemberResDto>(memberInfo);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }

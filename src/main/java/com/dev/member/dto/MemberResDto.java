@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MemberInfoResDto {
+public class MemberResDto {
     private String email;
 
-    public static MemberInfoResDto of(Member member){
-        return new MemberInfoResDto(member.getEmail());
+    public static MemberResDto of(Member member){
+        return new MemberResDto(member.getEmail());
     }
 }

@@ -5,9 +5,9 @@ spring:
       enabled: true
 
   datasource:
-    url:
-    username:
-    password:
+    url: jdbc:h2:tcp://localhost/~/cpt
+    username: sa
+    password: zoqtmxhs
     driver-class-name: org.h2.Driver
 
   jpa:
@@ -22,7 +22,8 @@ spring:
 
 jwt:
   secret: aaGVsbG8tbXktcmVhbC1uYW1lLWlzLWppbndvbi10aGlzLWtleS1pcy12ZXJ5LWltcG9ydGFudC1zby1iZS1jYXJlZnVsLXRoYW5rLXlvdQ==
-
+  access-token-expire-time: 1800000
+  refresh-token-expire-time: 604800000
 logging.level:
     org:
       hibernate:
