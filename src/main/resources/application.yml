@@ -1,0 +1,30 @@
+spring:
+
+  h2:
+    console:
+      enabled: true
+
+  datasource:
+    url:
+    username:
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+
+
+jwt:
+  secret: aaGVsbG8tbXktcmVhbC1uYW1lLWlzLWppbndvbi10aGlzLWtleS1pcy12ZXJ5LWltcG9ydGFudC1zby1iZS1jYXJlZnVsLXRoYW5rLXlvdQ==
+
+logging.level:
+    org:
+      hibernate:
+        SQL:true
+        type:trace
