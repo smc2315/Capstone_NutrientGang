@@ -19,6 +19,7 @@ public class MemberDto {
         return Member.builder()
                 .email(email)
                 .password(passwordEncoder.encode(password))
+                .username(username)
                 .authority(Authority.ROLE_USER)
                 .build();
     }

@@ -14,13 +14,14 @@ import com.dev.member.repository.MemberRepository;
 import com.dev.utils.response.BaseException;
 import com.dev.utils.response.BaseResponseStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -38,6 +39,8 @@ public class AuthService {
 
         MemberDto memberDto = new MemberDto(memberInfoReqDto.getEmail(), memberInfoReqDto.getPassword(), memberInfoReqDto.getUsername());
         Member member = memberDto.toMember(passwordEncoder);
+        log.debug("email -> {}",member.getEmail());
+        log.debug("username -> {}",member.getUsername());
 
         return MemberResDto.of(memberRepository.save(member));
         //todo: HealthStatus 에 info 저장 로직 만들기
