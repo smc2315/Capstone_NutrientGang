@@ -18,7 +18,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signup")
-    public BaseResponse<MemberResDto> signup(@ModelAttribute MemberReqDto memberReqDto){
+    public BaseResponse<MemberResDto> signup(@RequestBody MemberReqDto memberReqDto){
         try{
             MemberResDto memberResDto = authService.signup(memberReqDto);
             return new BaseResponse<>(memberResDto);
@@ -28,7 +28,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public BaseResponse<TokenDto> login(@ModelAttribute LoginReqDto loginReqDto){
+    public BaseResponse<TokenDto> login(@RequestBody LoginReqDto loginReqDto){
         try{
             TokenDto tokenDto = authService.login(loginReqDto);
             return new BaseResponse<>(tokenDto);

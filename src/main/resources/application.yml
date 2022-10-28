@@ -24,8 +24,8 @@ jwt:
   secret: aaGVsbG8tbXktcmVhbC1uYW1lLWlzLWppbndvbi10aGlzLWtleS1pcy12ZXJ5LWltcG9ydGFudC1zby1iZS1jYXJlZnVsLXRoYW5rLXlvdQ==
   access-token-expire-time: 1800000
   refresh-token-expire-time: 604800000
+
 logging.level:
-    org:
-      hibernate:
-        SQL:true
-        type:trace
+  org.hibernate.sql: debug
+  org.hibernate.type: trace
+  com.dev : debug
