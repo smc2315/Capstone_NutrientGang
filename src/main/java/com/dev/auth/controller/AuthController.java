@@ -9,9 +9,8 @@ import com.dev.member.dto.MemberResDto;
 import com.dev.utils.response.BaseException;
 import com.dev.utils.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-@Slf4j
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -19,13 +18,8 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signup")
-    public BaseResponse<MemberResDto> signup(@RequestBody MemberReqDto memberReqDto){
+    public BaseResponse<MemberResDto> signup(@ModelAttribute MemberReqDto memberReqDto){
         try{
-            log.debug("email -> {}",memberReqDto.getEmail());
-            log.debug("password -> {}",memberReqDto.getPassword());
-            log.debug("username -> {}",memberReqDto.getUsername());
-            log.debug("gender -> {}",memberReqDto.getGender());
-            log.debug("activity -> {}",memberReqDto.getActivity());
             MemberResDto memberResDto = authService.signup(memberReqDto);
             return new BaseResponse<>(memberResDto);
         }catch(BaseException exception){
@@ -34,7 +28,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public BaseResponse<TokenDto> login(@RequestBody LoginReqDto loginReqDto){
+    public BaseResponse<TokenDto> login(@ModelAttribute LoginReqDto loginReqDto){
         try{
             TokenDto tokenDto = authService.login(loginReqDto);
             return new BaseResponse<>(tokenDto);

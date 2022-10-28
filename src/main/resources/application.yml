@@ -13,11 +13,11 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     properties:
       hibernate:
         format_sql: true
-#        show_sql: true
+        show_sql: true
 
 
 jwt:
@@ -25,6 +25,7 @@ jwt:
   access-token-expire-time: 1800000
   refresh-token-expire-time: 604800000
 logging.level:
-    org.hibernate.SQL: debug
-    org.hibernate.type: trace
-    com.dev.auth: debug
+    org:
+      hibernate:
+        SQL:true
+        type:trace
