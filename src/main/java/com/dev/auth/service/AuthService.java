@@ -61,10 +61,12 @@ public class AuthService {
 
     @Transactional
     public TokenDto reissue(TokenReqDto tokenReqDto){
+
         // refreshToken 검증
         if(!tokenProvider.validateToken(tokenReqDto.getRefreshToken())){
             throw new BaseException(BaseResponseStatus.INVALID_TOKEN);// "Refresh Token이 유효하지 않습니다."
         }
+        //accessToken 도 유효성을 검증해야 되지 않을까 의문;
 
         // accessToken 에서 Member ID 가져오기
         Authentication authentication = tokenProvider.getAuthentication(tokenReqDto.getAccessToken());

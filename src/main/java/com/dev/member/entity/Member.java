@@ -1,18 +1,15 @@
 package com.dev.member.entity;
 
 import com.dev.auth.entity.Authority;
+import com.dev.health.entity.HealthStatus;
+import com.dev.health.entity.NutrientStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "member")
@@ -32,6 +29,12 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Authority authority;
 
+    @OneToMany(mappedBy = "member")
+    private List<HealthStatus> healthStatuses = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<NutrientStatus> nutrientStatuses = new ArrayList<>();
+
     @Builder
     public Member(String email,String password,String username,Authority authority){
         this.email = email;
@@ -39,5 +42,6 @@ public class Member {
         this.username = username;
         this.authority = authority;
     }
+
 
 }

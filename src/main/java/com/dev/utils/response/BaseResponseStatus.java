@@ -28,7 +28,10 @@ public enum BaseResponseStatus {
     NOT_FOUND_USER(false,2010,"유저를 찾을 수 없습니다."),
     NOT_FOUND_AUTHENTICATION(false,2011,"Security Context 에 인증 정보가 없습니다."),
     NOT_FOUND_AUTHORITY_IN_TOKEN(false,2012,"권한 정보가 없는 토큰입니다."),
-    INVALID_TOKEN(false,2013,"Refresh Token이 유효하지 않습니다.")
+    INVALID_TOKEN(false,2013,"Refresh Token이 유효하지 않습니다."),
+    NOT_FOUND_HEALTH_STATUS(false,2014,"건강정보를 찾을 수 없습니다."),
+    NOT_FOUND_NUTRIENT_STATUS(false,2015,"영양정보를 찾을 수 없습니다.")
+
     ;
 
 
