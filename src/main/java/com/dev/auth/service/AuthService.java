@@ -4,6 +4,10 @@ import com.dev.auth.dto.LoginReqDto;
 import com.dev.auth.dto.TokenReqDto;
 import com.dev.auth.entity.RefreshToken;
 import com.dev.auth.repository.RefreshTokenRepository;
+import com.dev.health.entity.HealthStatus;
+import com.dev.health.entity.NutrientStatus;
+import com.dev.health.repository.HealthStatusRepository;
+import com.dev.health.repository.NutrientStatusRepository;
 import com.dev.jwt.TokenProvider;
 import com.dev.jwt.dto.TokenDto;
 import com.dev.member.dto.MemberDto;
@@ -21,6 +25,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.time.LocalDate;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -30,17 +37,41 @@ public class AuthService {
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
 
+    private final HealthStatusRepository healthStatusRepository;
+    private final NutrientStatusRepository nutrientStatusRepository;
+
     @Transactional
-    public MemberResDto signup(MemberReqDto memberInfoReqDto){
+    public MemberResDto signup(MemberReqDto memberInfoReqDto) throws ParseException {
         if(memberRepository.existsByEmail(memberInfoReqDto.getEmail())){
             throw new BaseException(BaseResponseStatus.DUPLICATE_USER);
         }
 
         MemberDto memberDto = new MemberDto(memberInfoReqDto.getEmail(), memberInfoReqDto.getPassword(), memberInfoReqDto.getUsername());
         Member member = memberDto.toMember(passwordEncoder);
+        Member savedMember = memberRepository.save(member);
+        HealthStatus healthStatus = HealthStatus.builder()
+                .height(memberInfoReqDto.getHeight())
+                .weight(memberInfoReqDto.getWeight())
+                .gender(memberInfoReqDto.getGender())
+                .activity(memberInfoReqDto.getActivity())
+                .target(memberInfoReqDto.getTarget())
+                .date(LocalDate.now())
+                .build();
+        healthStatus.setNeedCalorie();
+        healthStatus.setNeedNutrients();
+        healthStatus.setMember(savedMember);
+        healthStatusRepository.save(healthStatus);
 
-        return MemberResDto.of(memberRepository.save(member));
-        //todo: HealthStatus 에 info 저장 로직 만들기
+        NutrientStatus nutrientStatus = NutrientStatus.builder()
+                .calorie(0)
+                .carbohydrate(0)
+                .protein(0)
+                .fat(0)
+                .date(LocalDate.now())
+                .build();
+        nutrientStatus.setMember(savedMember);
+        nutrientStatusRepository.save(nutrientStatus);
+        return MemberResDto.of(member);
     }
 
     @Transactional

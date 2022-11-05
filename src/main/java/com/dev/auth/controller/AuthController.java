@@ -11,6 +11,8 @@ import com.dev.utils.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -24,6 +26,8 @@ public class AuthController {
             return new BaseResponse<>(memberResDto);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
         }
     }
 

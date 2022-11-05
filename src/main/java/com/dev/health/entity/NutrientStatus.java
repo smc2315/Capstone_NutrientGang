@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -27,17 +28,16 @@ public class NutrientStatus {
     private int protein;
     @Column(nullable = false)
     private int fat;
-    @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(unique = true,nullable = false)
-    private Date date;
+    private LocalDate date;
 
     @ManyToOne
     @JoinColumn(name = "user_id",nullable = false)
     private Member member;
 
     @Builder
-    public NutrientStatus(int calorie,int carbohydrate,int protein,int fat,Date date){
+    public NutrientStatus(int calorie,int carbohydrate,int protein,int fat,LocalDate date){
         this.calorie = calorie;
         this.carbohydrate = carbohydrate;
         this.protein = protein;

@@ -1,6 +1,7 @@
 package com.dev.jwt;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @RequiredArgsConstructor
+@Slf4j
 public class JwtFilter extends OncePerRequestFilter {
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String BEARER_PREFIX = "Bearer";
@@ -23,14 +25,18 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // 1. Request Header 에서 토큰을 꺼냄
         String jwt = resolveToken(request);
+        log.info("jwt => {}",jwt);
 
         // 2. validateToken 으로 토큰 유효성 검사
         // 정상 토큰이면 해당 토큰으로 Authentication 을 가져와서 SecurityContext 에 저장
         if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
+            log.info("if 분기점 진입");
             Authentication authentication = tokenProvider.getAuthentication(jwt);
+            log.info("authentication => {}",authentication);
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            log.info("콘텍스트 홀더 주입 성공");
         }
-
+        log.info("마지막 라인 여기서 끊기면 doFilter 문제");
         filterChain.doFilter(request, response);
     }
 

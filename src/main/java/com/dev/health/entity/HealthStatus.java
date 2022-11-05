@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -33,17 +34,24 @@ public class HealthStatus {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Target target;
-    @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(unique = true,nullable = false)
-    private Date date;
+    private LocalDate date;
+    @Column(nullable = false)
+    private int needCalorie;
+    @Column(nullable = false)
+    private int needCarbohydrate;
+    @Column(nullable = false)
+    private int needProtein;
+    @Column(nullable = false)
+    private int needFat;
 
     @ManyToOne
     @JoinColumn(name = "user_id",nullable = false)
     private Member member;
 
     @Builder
-    public HealthStatus(int height,int weight,Gender gender,Activity activity, Target target,Date date){
+    public HealthStatus(int height,int weight,Gender gender,Activity activity, Target target,LocalDate date){
         this.height = height;
         this.weight = weight;
         this.gender = gender;
@@ -58,6 +66,21 @@ public class HealthStatus {
         }
         this.member = member;
         member.getHealthStatuses().add(this);
+    }
+
+    public void setNeedCalorie(){
+        int BMI = this.height * this.height * this.gender.getValue() * this.activity.getValue();
+        this.needCalorie = BMI / 10_000 + this.target.getValue();
+    }
+
+    public void setNeedNutrients(){
+        this.needCarbohydrate = (int)(this.needCalorie * this.target.getCarbohydratePortion() / 4);
+        this.needProtein = (int)(this.needCalorie * this.target.getProteinPortion() / 4);
+        this.needFat = (int)(this.needCalorie * this.target.getFatPortion() / 9);
+    }
+
+    public void setDate(LocalDate newDate){
+        this.date = newDate;
     }
 
 

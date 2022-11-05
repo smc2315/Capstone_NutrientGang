@@ -1,13 +1,16 @@
 package com.dev.health.dto;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDate;
 
-@AllArgsConstructor
 @Getter
-public class CalorieInfoDto {
+@AllArgsConstructor
+public class NutrientInfoDto {
     private LocalDate date;
-    private int calorie;
+    private int carbohydrate;
+    private int protein;
+    private int fat;
 }

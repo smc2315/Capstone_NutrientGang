@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @AllArgsConstructor
 @Getter
-public class CalorieInfoDto {
+public class WeightInfoDto {
     private LocalDate date;
-    private int calorie;
+    private int weight;
 }
