@@ -18,6 +18,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setCharacterEncoding("UTF-8");
         PrintWriter writer = response.getWriter();
-        writer.println("{\"error\": \"NO_AUTHORIZATION\", \"message\" : \"인증정보가 없습니다.\"}");
+        writer.println("{\"isSuccess\": false, \"message\" : \"인증정보가 없습니다.\", \"code\": \"NO_AUTHORIZATION\"}");
     }
 }

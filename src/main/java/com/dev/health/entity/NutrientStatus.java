@@ -29,7 +29,7 @@ public class NutrientStatus {
     @Column(nullable = false)
     private int fat;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Column(unique = true,nullable = false)
+    @Column(nullable = false)
     private LocalDate date;
 
     @ManyToOne

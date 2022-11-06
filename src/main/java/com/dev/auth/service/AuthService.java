@@ -1,6 +1,7 @@
 package com.dev.auth.service;
 
 import com.dev.auth.dto.LoginReqDto;
+import com.dev.auth.dto.LoginResDto;
 import com.dev.auth.dto.TokenReqDto;
 import com.dev.auth.entity.RefreshToken;
 import com.dev.auth.repository.RefreshTokenRepository;
@@ -18,6 +19,8 @@ import com.dev.member.repository.MemberRepository;
 import com.dev.utils.response.BaseException;
 import com.dev.utils.response.BaseResponseStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -30,8 +33,9 @@ import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final AuthenticationManager authenticationManager;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
@@ -41,7 +45,7 @@ public class AuthService {
     private final NutrientStatusRepository nutrientStatusRepository;
 
     @Transactional
-    public MemberResDto signup(MemberReqDto memberInfoReqDto) throws ParseException {
+    public MemberResDto signup(MemberReqDto memberInfoReqDto){
         if(memberRepository.existsByEmail(memberInfoReqDto.getEmail())){
             throw new BaseException(BaseResponseStatus.DUPLICATE_USER);
         }
@@ -75,10 +79,11 @@ public class AuthService {
     }
 
     @Transactional
-    public TokenDto login(LoginReqDto loginReqDto){
+    public LoginResDto login(LoginReqDto loginReqDto){
         UsernamePasswordAuthenticationToken authenticationToken = loginReqDto.toAuthentication();
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        Authentication authentication = authenticationManager.authenticate(authenticationToken);
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
+        String username = memberRepository.findByEmail(loginReqDto.getEmail()).get().getUsername();
 
         RefreshToken refreshToken = RefreshToken.builder()
                 .key(authentication.getName())
@@ -86,8 +91,10 @@ public class AuthService {
                 .build();
 
         refreshTokenRepository.save(refreshToken);
-
-        return tokenDto;
+        return LoginResDto.builder()
+                .username(username)
+                .tokenDto(tokenDto)
+                .build();
     }
 
     @Transactional

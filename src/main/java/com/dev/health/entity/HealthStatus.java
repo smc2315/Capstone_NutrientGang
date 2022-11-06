@@ -35,7 +35,7 @@ public class HealthStatus {
     @Enumerated(EnumType.STRING)
     private Target target;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Column(unique = true,nullable = false)
+    @Column(nullable = false)
     private LocalDate date;
     @Column(nullable = false)
     private int needCalorie;

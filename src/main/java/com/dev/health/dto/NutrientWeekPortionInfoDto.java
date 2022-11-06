@@ -1,10 +1,12 @@
 package com.dev.health.dto;
 
 import lombok.Builder;
+import lombok.Getter;
 
 import java.time.LocalDate;
 import java.util.Date;
 
+@Getter
 public class NutrientWeekPortionInfoDto {
     private LocalDate date;
     private double carbohydratePortion;

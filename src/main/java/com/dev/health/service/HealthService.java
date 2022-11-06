@@ -7,6 +7,7 @@ import com.dev.jwt.utils.SecurityUtil;
 import com.dev.utils.response.BaseException;
 import com.dev.utils.response.BaseResponseStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class HealthService {
     private final HealthStatusRepository healthStatusRepository;
     private final NutrientStatusRepository nutrientStatusRepository;
@@ -153,6 +155,10 @@ public class HealthService {
                     .fatPortion((double)(nutrientInfo.getFat())/sumVal)
                     .build()
             );
+            log.info("들어간 값: {}",portionList.get(portionList.size()-1).getCarbohydratePortion());
+            log.info("들어간 값: {}",portionList.get(portionList.size()-1).getProteinPortion());
+            log.info("들어간 값: {}",portionList.get(portionList.size()-1).getFatPortion());
+
         }
         return portionList;
     }

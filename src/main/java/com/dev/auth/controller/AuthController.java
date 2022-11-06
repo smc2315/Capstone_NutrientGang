@@ -1,6 +1,7 @@
 package com.dev.auth.controller;
 
 import com.dev.auth.dto.LoginReqDto;
+import com.dev.auth.dto.LoginResDto;
 import com.dev.auth.dto.TokenReqDto;
 import com.dev.auth.service.AuthService;
 import com.dev.jwt.dto.TokenDto;
@@ -9,6 +10,7 @@ import com.dev.member.dto.MemberResDto;
 import com.dev.utils.response.BaseException;
 import com.dev.utils.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -16,6 +18,7 @@ import java.text.ParseException;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
     private final AuthService authService;
 
@@ -26,16 +29,14 @@ public class AuthController {
             return new BaseResponse<>(memberResDto);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
         }
     }
 
     @PostMapping("/login")
-    public BaseResponse<TokenDto> login(@RequestBody LoginReqDto loginReqDto){
+    public BaseResponse<LoginResDto> login(@RequestBody LoginReqDto loginReqDto){
         try{
-            TokenDto tokenDto = authService.login(loginReqDto);
-            return new BaseResponse<>(tokenDto);
+            LoginResDto loginResDto = authService.login(loginReqDto);
+            return new BaseResponse<>(loginResDto);
         }catch (BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
