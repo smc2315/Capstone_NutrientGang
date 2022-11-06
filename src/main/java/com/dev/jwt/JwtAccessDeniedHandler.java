@@ -21,6 +21,6 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
         response.setCharacterEncoding("UTF-8");
         PrintWriter writer = response.getWriter();
         log.debug("JwtAccessDeniedHandler CALL!");
-        writer.println("{\"isSuccess\": false, \"message\" : \"권한이 없습니다.\", \"code\": \"AUTH_FORBIDDEN\"}");
+        writer.println("{\"isSuccess\": false, \"code\": \"AUTH_FORBIDDEN\", \"message\" : \"권한이 없습니다.\"");
     }
 }
