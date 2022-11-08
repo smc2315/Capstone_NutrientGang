@@ -1,5 +1,6 @@
-package com.dev.health.entity;
+package com.dev.register.entity;
 
+import com.dev.member.entity.Member;
 import com.dev.utils.StringArrayConverter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -28,5 +30,12 @@ public class Intake {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id",nullable = false)
+    private Member member;
+
+    @OneToMany(mappedBy = "intake")
+    private List<ImageUrl> imageUrls = new ArrayList<>();
 
 }

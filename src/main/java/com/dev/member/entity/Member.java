@@ -3,6 +3,7 @@ package com.dev.member.entity;
 import com.dev.auth.entity.Authority;
 import com.dev.health.entity.HealthStatus;
 import com.dev.health.entity.NutrientStatus;
+import com.dev.register.entity.Intake;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,6 +35,9 @@ public class Member {
 
     @OneToMany(mappedBy = "member")
     private List<NutrientStatus> nutrientStatuses = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<Intake> intakes = new ArrayList<>();
 
     @Builder
     public Member(String email,String password,String username,Authority authority){
