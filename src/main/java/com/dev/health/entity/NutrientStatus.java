@@ -52,4 +52,21 @@ public class NutrientStatus {
         this.member = member;
         member.getNutrientStatuses().add(this);
     }
+
+    public void addCalorie(int calorie){
+        this.calorie += calorie;
+    }
+
+    public void addCarbohydrate(int carbohydrate){
+        this.carbohydrate += carbohydrate;
+    }
+
+    public void addProtein(int protein){
+        this.protein += protein;
+    }
+
+    public void addFat(int fat){
+        this.fat += fat;
+    }
 }
+

@@ -21,8 +21,7 @@ public interface HealthStatusRepository extends JpaRepository<HealthStatus,Long>
     Integer findNeedCalorieByMemberAndDate(@Param("memberId") Long id, @Param("date") LocalDate date);
     @Query("select new com.dev.health.dto.NutrientDto(h.needCarbohydrate,h.needProtein,h.needFat) from HealthStatus h where h.member.id =:memberId and h.date = :date")
     Optional<NutrientDto> findNeedNutrientByMemberAndDate(@Param("memberId") Long id, @Param("date") LocalDate date);
-    @Query("select h.needCalorie from HealthStatus h where h.member.id = :memberId and h.date = :today")
-    Integer findCurrentNeedCalorieByMember(@Param("memberId") Long id, @Param("today") LocalDate date);
+
     @Query("select max(h.weight) from HealthStatus h where h.member.id = :memberId")
     Integer findMaxWeightByMember(@Param("memberId")Long userId);
     @Query("select min(h.weight) from HealthStatus h where h.member.id = :memberId")

@@ -12,12 +12,14 @@ import java.util.List;
 public class WeightReportResDto {
     private Integer maxWeight;
     private Integer minWeight;
+    private int todayWeight;
     private List<WeightInfoDto> weightInfoList;
 
     @Builder
-    public WeightReportResDto(Integer maxWeight, Integer minWeight, List<WeightInfoDto> weightInfoList){
+    public WeightReportResDto(Integer maxWeight, Integer minWeight,int todayWeight, List<WeightInfoDto> weightInfoList){
         this.maxWeight = maxWeight;
         this.minWeight = minWeight;
+        this.todayWeight = todayWeight;
         this.weightInfoList = weightInfoList;
     }
 }

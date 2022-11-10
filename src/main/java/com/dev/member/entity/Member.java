@@ -3,7 +3,9 @@ package com.dev.member.entity;
 import com.dev.auth.entity.Authority;
 import com.dev.health.entity.HealthStatus;
 import com.dev.health.entity.NutrientStatus;
-import com.dev.register.entity.Intake;
+import com.dev.register.entity.Breakfast;
+import com.dev.register.entity.Dinner;
+import com.dev.register.entity.Lunch;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,8 +39,13 @@ public class Member {
     private List<NutrientStatus> nutrientStatuses = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
-    private List<Intake> intakes = new ArrayList<>();
+    private List<Breakfast> breakfasts = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member")
+    private List<Lunch> lunches = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<Dinner> dinners = new ArrayList<>();
     @Builder
     public Member(String email,String password,String username,Authority authority){
         this.email = email;

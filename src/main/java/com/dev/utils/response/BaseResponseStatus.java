@@ -30,16 +30,18 @@ public enum BaseResponseStatus {
     NOT_FOUND_AUTHORITY_IN_TOKEN(false,2012,"권한 정보가 없는 토큰입니다."),
     INVALID_TOKEN(false,2013,"Refresh Token이 유효하지 않습니다."),
     NOT_FOUND_HEALTH_STATUS(false,2014,"건강정보를 찾을 수 없습니다."),
-    NOT_FOUND_NUTRIENT_STATUS(false,2015,"영양정보를 찾을 수 없습니다.")
-
-    ;
+    NOT_FOUND_NUTRIENT_STATUS(false,2015,"영양정보를 찾을 수 없습니다."),
+    NOT_FOUND_FOOD(false,2016,"음식정보를 찾을 수 없습니다."),
+    NOT_FOUND_INTAKE(false,2017,"식사 기록을 찾을 수 없습니다."),
 
 
     /**
+     * 5000: 서버 내부 오류
+     * */
+    INTERNAL_SERVER_ERROR(false,5000,"서버 내부 로직 중 오류가 발생했습니다.");
+    /**
      * 코드 추가해서 Status를 관리합니다.
      * */
-
-
     private final boolean isSuccess;
     private final int code;
     private final String message;
