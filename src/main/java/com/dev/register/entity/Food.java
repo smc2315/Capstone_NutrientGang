@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "food")
+@Table(name = "fooddb")
 @NoArgsConstructor
 @Getter
 public class Food {
@@ -15,14 +15,16 @@ public class Food {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "음식명",nullable = false)
     private String name;
-    @Column(nullable = false)
+    @Column(name = "1회제공량",nullable = false,columnDefinition = "MEDIUMTEXT")
+    private int oncePerServe;
+    @Column(name = "열량",nullable = false)
     private double calorie;
-    @Column(nullable = false)
+    @Column(name = "탄수화물",nullable = false)
     private double carbohydrate;
-    @Column(nullable = false)
+    @Column(name = "단백질",nullable = false)
     private double protein;
-    @Column(nullable = false)
+    @Column(name = "지방",nullable = false)
     private double fat;
 }
