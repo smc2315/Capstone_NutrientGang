@@ -16,7 +16,7 @@ import java.util.Date;
 @Getter
 public class NutrientStatus {
     @Id
-    @Column(name = "nutrientStatus_id")
+    @Column(name = "nutrient_status_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

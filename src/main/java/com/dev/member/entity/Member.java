@@ -25,7 +25,7 @@ public class Member {
     private Long id;
     @Column(unique = true,nullable = false)
     private String email;
-    @Column(nullable = false)
+    @Column(name="pass_word",nullable = false)
     private String password;
     @Column(nullable = false)
     private String username;

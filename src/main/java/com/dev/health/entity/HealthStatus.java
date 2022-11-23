@@ -17,7 +17,7 @@ import java.util.Date;
 @Getter
 public class HealthStatus {
     @Id
-    @Column(name = "healthStatus_id")
+    @Column(name = "health_status_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
