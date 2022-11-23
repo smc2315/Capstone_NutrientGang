@@ -15,7 +15,7 @@ public class Food {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false,columnDefinition = "MEDIUMTEXT")
+    @Column(name = "food_name",nullable = false,columnDefinition = "MEDIUMTEXT")
     private String name;
     @Column(nullable = false)
     private int amount;
@@ -28,5 +28,5 @@ public class Food {
     @Column(nullable = false)
     private double fat;
     @Column(name="food_index")
-    private int index;
+    private Integer index;
 }
