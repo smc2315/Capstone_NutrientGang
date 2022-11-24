@@ -75,7 +75,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .apply(new JwtSecurityConfig(tokenProvider));
         http.cors().configurationSource(request -> {
             var cors = new CorsConfiguration();
-            cors.setAllowedOrigins(List.of("http://localhost:8080"));
+            cors.setAllowedOrigins(List.of("http://localhost:8080","https://dguicecapstone.com"));
             cors.setAllowedMethods(List.of("GET","POST","PUT","DELETE","PATCH","OPTIONS"));
             cors.setAllowedHeaders(List.of("*"));
             return cors;
