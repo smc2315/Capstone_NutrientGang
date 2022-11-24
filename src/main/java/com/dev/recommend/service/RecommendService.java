@@ -1,11 +1,10 @@
 package com.dev.recommend.service;
 
 
-import com.dev.recommend.dto.NutrientDto;
-import com.dev.recommend.dto.NutrientStatusInfoResDto;
-import com.dev.recommend.dto.CalorieInfoResDto;
-import com.dev.recommend.repository.HealthStatusRepository;
-import com.dev.recommend.repository.NutrientStatusRepository;
+import com.dev.health.dto.*;
+import com.dev.health.entity.NutrientStatus;
+import com.dev.health.repository.HealthStatusRepository;
+import com.dev.health.repository.NutrientStatusRepository;
 import com.dev.jwt.utils.SecurityUtil;
 import com.dev.utils.response.BaseException;
 import com.dev.utils.response.BaseResponseStatus;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -64,6 +64,15 @@ public class RecommendService {
                 .needNutrient(needNutrient)
                 .haveNutrient(haveNutrient)
                 .build();
+
+    }
+
+    private void calculateBreakfast(LocalDate date){
+        CalorieInfoResDto calorieInfo = getCalorieInfo(date);
+
+        int minBreakfastNeedCalorie = calorieInfo.getNeedCalorie()/3-400;
+        int maxBreakfastNeedCalorie = calorieInfo.getNeedCalorie()/3-400;
+
 
     }
 }
