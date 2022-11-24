@@ -215,7 +215,7 @@ public class HealthService {
         List<Breakfast> breakfastList = breakfastRepository.findByMemberAndDate(userId, date);
         List<Lunch> lunchList = lunchRepository.findByMemberAndDate(userId, date);
         List<Dinner> dinnerList = dinnerRepository.findByMemberAndDate(userId, date);
-        int eachNeedCalorie = healthStatusRepository.findNeedCalorieByMemberAndDate(userId, date) / 3;
+        Integer eachNeedCalorie = healthStatusRepository.findNeedCalorieByMemberAndDate(userId, date) / 3;
         intakeMealInfoResDto.setEachNeedCalorie(eachNeedCalorie);
 
         double breakfastCalorie = 0;
