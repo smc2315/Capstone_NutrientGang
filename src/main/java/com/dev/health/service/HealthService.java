@@ -167,7 +167,6 @@ public class HealthService {
 
     @Transactional
     public NutrientWeekPortionInfoResDto getWeekNutrientPortion(LocalDate begin, LocalDate end){
-//        todo: 없어도 데이터 넣을수 있게 고쳐야함! 어캐하지?
         Long userId = SecurityUtil.getCurrentMemberId();
         LocalDate date = begin;
         List<NutrientWeekPortionInfoDto> portionList = new ArrayList<>();
@@ -358,6 +357,31 @@ public class HealthService {
                 .lunchList(lunchList)
                 .dinnerList(dinnerList)
                 .build();
+    }
+
+    @Transactional
+    public void createStatuses() {
+        LocalDate today = LocalDate.now();
+        LocalDate yesterday = today.plusDays(-1);
+        List<Member> members = memberRepository.findAll();
+        for (Member member : members) {
+            Optional<HealthStatus> yesterdayInfo = healthStatusRepository.findByMemberAndDate(member.getId(), yesterday);
+            if (yesterdayInfo.isEmpty()) {
+                continue;
+            }
+            HealthStatus healthStatus = yesterdayInfo.get();
+            healthStatus.setDate(today);
+            healthStatusRepository.save(healthStatus);
+            NutrientStatus nutrientStatus = NutrientStatus.builder()
+                    .calorie(0)
+                    .carbohydrate(0)
+                    .protein(0)
+                    .fat(0)
+                    .date(today)
+                    .build();
+            nutrientStatus.setMember(member);
+            nutrientStatusRepository.save(nutrientStatus);
+        }
     }
 
     private NutrientDto calculateWeekNutrient(List<NutrientInfoDto> weekNutrientInfo){
