@@ -41,8 +41,12 @@ public class HealthService {
 
     private final MemberRepository memberRepository;
 
+    /**
+     * 다이어리 : 칼로리 조회
+     * return 섭취한 칼로리와 권장 칼로리
+     * */
     @Transactional
-    public CalorieInfoResDto getCalorieInfo(LocalDate date){
+    public CalorieInfoResDto getCalorieInfo(LocalDate date) {
         Long userId = SecurityUtil.getCurrentMemberId();
         Integer needCalorie = healthStatusRepository.findNeedCalorieByMemberAndDate(userId, date);
         if (needCalorie == null) {
@@ -60,13 +64,17 @@ public class HealthService {
                 .build();
     }
 
+    /**
+     * 다이어리 : 영양정보 조회
+     * return 섭취한 영양소와 권장 영양소
+     * */
     @Transactional
-    public NutrientStatusInfoResDto getNutrientInfo(LocalDate date){
+    public NutrientStatusInfoResDto getNutrientInfo(LocalDate date) {
         Long userId = SecurityUtil.getCurrentMemberId();
 
         // 섭취해야할 영양소 계산
         Optional<NutrientDto> needNutrientInfo = healthStatusRepository.findNeedNutrientByMemberAndDate(userId, date);
-        if(needNutrientInfo.isEmpty()){
+        if (needNutrientInfo.isEmpty()) {
             throw new BaseException(BaseResponseStatus.NOT_FOUND_HEALTH_STATUS);
         }
         NutrientDto needNutrient = needNutrientInfo.get();
@@ -74,7 +82,7 @@ public class HealthService {
 
         // 섭취한 영양소 값
         Optional<NutrientDto> haveNutrientInfo = nutrientStatusRepository.findHaveNutrientInfoByMemberAndDate(userId, date);
-        if(haveNutrientInfo.isEmpty()){
+        if (haveNutrientInfo.isEmpty()) {
             throw new BaseException(BaseResponseStatus.NOT_FOUND_NUTRIENT_STATUS);
         }
         NutrientDto haveNutrient = haveNutrientInfo.get();
@@ -85,129 +93,13 @@ public class HealthService {
                 .build();
 
     }
-
+    /**
+     * 다이어리 : 식사 정보 조회
+     * return 아침,점심,저녁 권장 칼로리 및 섭취 칼로리 / 아침 점심 저녁 식사 정보 및 이미지 url 정보
+     * TODO: 각 식사 기록에 ID 값 부여하여 리턴하도록 하기
+     * */
     @Transactional
-    public CalorieReportResDto getCalorieReportInfo(){
-        Long userId = SecurityUtil.getCurrentMemberId();
-
-        Integer maxCalorie = nutrientStatusRepository.findMaxCalorieByMember(userId);
-        Integer minCalorie = nutrientStatusRepository.findMinCalorieByMember(userId);
-        List<CalorieInfoDto> allCalorieInfo = nutrientStatusRepository.findAllCalorieInfoByMember(userId);
-        Integer currentNeedCalorie = healthStatusRepository.findNeedCalorieByMemberAndDate(userId,LocalDate.now());
-        NutrientStatus todayNutrientStatus = nutrientStatusRepository.findByMemberAndDate(userId, LocalDate.now()).get();
-
-
-        //todo: 정보를 찾을수 없을때 exception 날려야함
-
-
-        return CalorieReportResDto.builder()
-                .maxCalorie(maxCalorie)
-                .minCalorie(minCalorie)
-                .needCalorie(currentNeedCalorie)
-                .todayCalorie(todayNutrientStatus.getCalorie())
-                .calorieInfoList(allCalorieInfo)
-                .build();
-    }
-
-    @Transactional
-    public WeightReportResDto getWeightReportInfo(){
-        Long userId = SecurityUtil.getCurrentMemberId();
-        Integer maxWeight = healthStatusRepository.findMaxWeightByMember(userId);
-        Integer minWeight = healthStatusRepository.findMinWeightByMember(userId);
-        List<WeightInfoDto> allWeightInfo = healthStatusRepository.findAllWeightInfoByMember(userId);
-        HealthStatus todayHealthStatus = healthStatusRepository.findByMemberAndDate(userId, LocalDate.now()).get();
-
-        //todo: 정보를 찾을수 없을때 exception 날려야함
-
-
-        return WeightReportResDto.builder()
-                .maxWeight(maxWeight)
-                .minWeight(minWeight)
-                .todayWeight(todayHealthStatus.getWeight())
-                .weightInfoList(allWeightInfo)
-                .build();
-
-    }
-
-    @Transactional
-    public NutrientWeekPortionDto getNutrientPortionInfo(LocalDate begin, LocalDate end){
-        Long userId = SecurityUtil.getCurrentMemberId();
-        List<NutrientInfoDto> weekHaveNutrientInfo = nutrientStatusRepository.findHaveNutrientInfoByMemberAndPeriod(userId,begin,end);
-        return calculateNutrientWeekPortion(weekHaveNutrientInfo);
-
-    }
-
-    @Transactional
-    public NutrientWeekInfoResDto getNutrientWeekInfo(LocalDate begin,LocalDate end){
-        Long userId = SecurityUtil.getCurrentMemberId();
-        List<NutrientInfoDto> weekHaveNutrientInfo = nutrientStatusRepository.findHaveNutrientInfoByMemberAndPeriod(userId,begin,end);
-        List<NutrientInfoDto> weekNeedNutrientInfo = healthStatusRepository.findNeedNutrientInfoByMemberAndPeriod(userId, begin, end);
-        NutrientDto weekNeedNutrientAvg = calculateWeekNutrient(weekNeedNutrientInfo);
-        NutrientDto weekHaveNutrientAvg = calculateWeekNutrient(weekHaveNutrientInfo);
-
-        double carbohydratePortion = (double)weekHaveNutrientAvg.getCarbohydrate()/weekNeedNutrientAvg.getCarbohydrate();
-        double proteinPortion = (double)weekHaveNutrientAvg.getProtein()/weekNeedNutrientAvg.getProtein();
-        double fatPortion = (double)weekHaveNutrientAvg.getFat()/weekNeedNutrientAvg.getFat();
-
-        carbohydratePortion = Double.parseDouble(String.format("%.2f",carbohydratePortion));
-        proteinPortion = Double.parseDouble(String.format("%.2f",proteinPortion));
-        fatPortion = Double.parseDouble(String.format("%.2f",fatPortion));
-
-        NutrientWeekPortionDto nutrientPortion = NutrientWeekPortionDto.builder()
-                .carbohydratePortion(carbohydratePortion)
-                .proteinPortion(proteinPortion)
-                .fatPortion(fatPortion)
-                .build();
-        return NutrientWeekInfoResDto.builder()
-                .haveNutrient(weekHaveNutrientAvg)
-                .needNutrient(weekNeedNutrientAvg)
-                .nutrientPortion(nutrientPortion)
-                .build();
-    }
-
-    @Transactional
-    public NutrientWeekPortionInfoResDto getWeekNutrientPortion(LocalDate begin, LocalDate end){
-        Long userId = SecurityUtil.getCurrentMemberId();
-        LocalDate date = begin;
-        List<NutrientWeekPortionInfoDto> portionList = new ArrayList<>();
-        while(!date.equals(end.plusDays(1))){
-            Optional<NutrientInfoDto> findHaveNutrientWithDateByMemberAndDate = nutrientStatusRepository.findHaveNutrientWithDateByMemberAndDate(userId, date);
-            if(findHaveNutrientWithDateByMemberAndDate.isEmpty()){
-                portionList.add(NutrientWeekPortionInfoDto.builder()
-                        .date(date)
-                        .carbohydratePortion(0.00)
-                        .proteinPortion(0.00)
-                        .fatPortion(0.00)
-                        .build());
-                date = date.plusDays(1);
-                continue;
-            }
-            NutrientInfoDto nutrientInfo = findHaveNutrientWithDateByMemberAndDate.get();
-            int sumVal = nutrientInfo.getCarbohydrate()+ nutrientInfo.getProtein()+nutrientInfo.getFat();
-            if(sumVal == 0){
-                portionList.add(NutrientWeekPortionInfoDto.builder()
-                        .date(date)
-                        .carbohydratePortion(0.00)
-                        .proteinPortion(0.00)
-                        .fatPortion(0.00)
-                        .build());
-                date = date.plusDays(1);
-                continue;
-            }
-            portionList.add(NutrientWeekPortionInfoDto.builder()
-                    .date(nutrientInfo.getDate())
-                    .carbohydratePortion((double)(nutrientInfo.getCarbohydrate())/sumVal)
-                    .proteinPortion((double)(nutrientInfo.getProtein())/sumVal)
-                    .fatPortion((double)(nutrientInfo.getFat())/sumVal)
-                    .build());
-            date = date.plusDays(1);
-        }
-
-        return NutrientWeekPortionInfoResDto.builder().weekPortionList(portionList).build();
-    }
-
-    @Transactional
-    public IntakeMealInfoResDto getIntakeMealInfo(LocalDate date){
+    public IntakeMealInfoResDto getIntakeMealInfo(LocalDate date) {
         Long userId = SecurityUtil.getCurrentMemberId();
         IntakeMealInfoResDto intakeMealInfoResDto = new IntakeMealInfoResDto();
 
@@ -227,7 +119,7 @@ public class HealthService {
             double calorie = 0;
             for (String menu : menus) {
                 Optional<Food> findFood = foodRepository.findByName(menu);
-                if(findFood.isEmpty()){
+                if (findFood.isEmpty()) {
                     throw new BaseException(BaseResponseStatus.NOT_FOUND_FOOD);
                 }
                 Food food = findFood.get();
@@ -248,7 +140,7 @@ public class HealthService {
             double calorie = 0;
             for (String menu : menus) {
                 Optional<Food> findFood = foodRepository.findByName(menu);
-                if(findFood.isEmpty()){
+                if (findFood.isEmpty()) {
                     throw new BaseException(BaseResponseStatus.NOT_FOUND_FOOD);
                 }
                 Food food = findFood.get();
@@ -270,7 +162,7 @@ public class HealthService {
             double calorie = 0;
             for (String menu : menus) {
                 Optional<Food> findFood = foodRepository.findByName(menu);
-                if(findFood.isEmpty()){
+                if (findFood.isEmpty()) {
                     throw new BaseException(BaseResponseStatus.NOT_FOUND_FOOD);
                 }
                 Food food = findFood.get();
@@ -285,38 +177,198 @@ public class HealthService {
             dinnerCalorie += calorie;
         }
 
-        intakeMealInfoResDto.setBreakfastCalorie((int)breakfastCalorie);
-        intakeMealInfoResDto.setLunchCalorie((int)lunchCalorie);
-        intakeMealInfoResDto.setDinnerCalorie((int)dinnerCalorie);
+        intakeMealInfoResDto.setBreakfastCalorie((int) breakfastCalorie);
+        intakeMealInfoResDto.setLunchCalorie((int) lunchCalorie);
+        intakeMealInfoResDto.setDinnerCalorie((int) dinnerCalorie);
 
         return intakeMealInfoResDto;
 
     }
 
+    /**
+     * 리포트 (변화추이) 칼로리 변화
+     * return 칼로리의 변화 추이와 섭취,권장 칼로리 및 최대 최소 칼로리
+     * */
     @Transactional
-    public MealPortionResDto getMealPortion(LocalDate begin,LocalDate end){
+    public CalorieReportResDto getCalorieReportInfo() {
+        Long userId = SecurityUtil.getCurrentMemberId();
+
+        Integer maxCalorie = nutrientStatusRepository.findMaxCalorieByMember(userId);
+        Integer minCalorie = nutrientStatusRepository.findMinCalorieByMember(userId);
+        List<CalorieInfoDto> allCalorieInfo = nutrientStatusRepository.findAllCalorieInfoByMember(userId);
+        Integer currentNeedCalorie = healthStatusRepository.findNeedCalorieByMemberAndDate(userId, LocalDate.now());
+        Optional<NutrientStatus> todayNutrientStatus = nutrientStatusRepository.findByMemberAndDate(userId, LocalDate.now());
+
+        if (maxCalorie == null || minCalorie == null || allCalorieInfo.isEmpty() || todayNutrientStatus.isEmpty()) {
+            throw new BaseException(BaseResponseStatus.NOT_FOUND_NUTRIENT_STATUS);
+        }
+
+        if (currentNeedCalorie == null) {
+            throw new BaseException(BaseResponseStatus.NOT_FOUND_HEALTH_STATUS);
+        }
+
+
+        return CalorieReportResDto.builder()
+                .maxCalorie(maxCalorie)
+                .minCalorie(minCalorie)
+                .needCalorie(currentNeedCalorie)
+                .todayCalorie(todayNutrientStatus.get().getCalorie())
+                .calorieInfoList(allCalorieInfo)
+                .build();
+    }
+
+    /**
+     * 리포트 (변화추이) 몸무게 변화
+     * return 몸무게의 변화 추이. 최대 최소 몸무게, 오늘 몸무게
+     * */
+    @Transactional
+    public WeightReportResDto getWeightReportInfo() {
+        Long userId = SecurityUtil.getCurrentMemberId();
+        Integer maxWeight = healthStatusRepository.findMaxWeightByMember(userId);
+        Integer minWeight = healthStatusRepository.findMinWeightByMember(userId);
+        List<WeightInfoDto> allWeightInfo = healthStatusRepository.findAllWeightInfoByMember(userId);
+        Optional<HealthStatus> todayHealthStatus = healthStatusRepository.findByMemberAndDate(userId, LocalDate.now());
+
+        if (maxWeight == null || minWeight == null || allWeightInfo.isEmpty() || todayHealthStatus.isEmpty()){
+            throw new BaseException(BaseResponseStatus.NOT_FOUND_HEALTH_STATUS);
+        }
+
+
+            return WeightReportResDto.builder()
+                    .maxWeight(maxWeight)
+                    .minWeight(minWeight)
+                    .todayWeight(todayHealthStatus.get().getWeight())
+                    .weightInfoList(allWeightInfo)
+                    .build();
+
+    }
+
+    /**
+     * 리포트 (영양균형) 섭취 영양소 비율 조회
+     * return 일주일 동안 섭취한 탄수화물, 단백질, 지방 비율
+     * */
+    @Transactional
+    public NutrientWeekPortionDto getNutrientPortionInfo(LocalDate begin, LocalDate end) {
+        Long userId = SecurityUtil.getCurrentMemberId();
+        List<NutrientInfoDto> weekHaveNutrientInfo = nutrientStatusRepository.findHaveNutrientInfoByMemberAndPeriod(userId, begin, end);
+        // 리스트가 비어있어도 계산은 해야하기 때문에 예외처리 하지 않음
+        return calculateNutrientWeekPortion(weekHaveNutrientInfo);
+
+    }
+
+    /**
+     * 리포트 (변화추이) 권장/섭취 상세정보 조회
+     * return 평균 섭취 영양소와 권장 섭취 영양소의 평균 그리고 그에 따른 섭취 비율
+     * */
+    @Transactional
+    public NutrientWeekInfoResDto getNutrientWeekInfo(LocalDate begin, LocalDate end) {
+        Long userId = SecurityUtil.getCurrentMemberId();
+        List<NutrientInfoDto> weekHaveNutrientInfo = nutrientStatusRepository.findHaveNutrientInfoByMemberAndPeriod(userId, begin, end);
+        List<NutrientInfoDto> weekNeedNutrientInfo = healthStatusRepository.findNeedNutrientInfoByMemberAndPeriod(userId, begin, end);
+        if (weekHaveNutrientInfo.isEmpty()){
+            throw new BaseException(BaseResponseStatus.NOT_FOUND_NUTRIENT_STATUS);
+        }
+        if (weekNeedNutrientInfo.isEmpty()){
+            throw new BaseException(BaseResponseStatus.NOT_FOUND_HEALTH_STATUS);
+        }
+
+        NutrientDto weekNeedNutrientAvg = calculateWeekNutrient(weekNeedNutrientInfo);
+        NutrientDto weekHaveNutrientAvg = calculateWeekNutrient(weekHaveNutrientInfo);
+
+        double carbohydratePortion = (double) weekHaveNutrientAvg.getCarbohydrate() / weekNeedNutrientAvg.getCarbohydrate();
+        double proteinPortion = (double) weekHaveNutrientAvg.getProtein() / weekNeedNutrientAvg.getProtein();
+        double fatPortion = (double) weekHaveNutrientAvg.getFat() / weekNeedNutrientAvg.getFat();
+
+        carbohydratePortion = Double.parseDouble(String.format("%.2f", carbohydratePortion));
+        proteinPortion = Double.parseDouble(String.format("%.2f", proteinPortion));
+        fatPortion = Double.parseDouble(String.format("%.2f", fatPortion));
+
+        NutrientWeekPortionDto nutrientPortion = NutrientWeekPortionDto.builder()
+                .carbohydratePortion(carbohydratePortion)
+                .proteinPortion(proteinPortion)
+                .fatPortion(fatPortion)
+                .build();
+        return NutrientWeekInfoResDto.builder()
+                .haveNutrient(weekHaveNutrientAvg)
+                .needNutrient(weekNeedNutrientAvg)
+                .nutrientPortion(nutrientPortion)
+                .build();
+    }
+
+    /**
+     * 리포트 (변화추이) 일주일 영양소 비율 그래프 조회
+     * return 일주일 섭취 영양소 비율 리스트
+     * */
+    @Transactional
+    public NutrientWeekPortionInfoResDto getWeekNutrientPortion(LocalDate begin, LocalDate end) {
+        Long userId = SecurityUtil.getCurrentMemberId();
+        LocalDate date = begin;
+        List<NutrientWeekPortionInfoDto> portionList = new ArrayList<>();
+        while (!date.equals(end.plusDays(1))) {
+            Optional<NutrientInfoDto> findHaveNutrientWithDateByMemberAndDate = nutrientStatusRepository.findHaveNutrientWithDateByMemberAndDate(userId, date);
+            if (findHaveNutrientWithDateByMemberAndDate.isEmpty()) {
+                portionList.add(NutrientWeekPortionInfoDto.builder()
+                        .date(date)
+                        .carbohydratePortion(0.00)
+                        .proteinPortion(0.00)
+                        .fatPortion(0.00)
+                        .build());
+                date = date.plusDays(1);
+                continue;
+            }
+            NutrientInfoDto nutrientInfo = findHaveNutrientWithDateByMemberAndDate.get();
+            int sumVal = nutrientInfo.getCarbohydrate() + nutrientInfo.getProtein() + nutrientInfo.getFat();
+            if (sumVal == 0) {
+                portionList.add(NutrientWeekPortionInfoDto.builder()
+                        .date(date)
+                        .carbohydratePortion(0.00)
+                        .proteinPortion(0.00)
+                        .fatPortion(0.00)
+                        .build());
+                date = date.plusDays(1);
+                continue;
+            }
+            portionList.add(NutrientWeekPortionInfoDto.builder()
+                    .date(nutrientInfo.getDate())
+                    .carbohydratePortion((double) (nutrientInfo.getCarbohydrate()) / sumVal)
+                    .proteinPortion((double) (nutrientInfo.getProtein()) / sumVal)
+                    .fatPortion((double) (nutrientInfo.getFat()) / sumVal)
+                    .build());
+            date = date.plusDays(1);
+        }
+
+        return NutrientWeekPortionInfoResDto.builder().weekPortionList(portionList).build();
+    }
+
+
+    /**
+     * 리포트 (식사여부) 식사 기록 그래프 조회 성공
+     * return 총 식사횟수의 아침,점심,저녁 비율
+     * */
+    @Transactional
+    public MealPortionResDto getMealPortion(LocalDate begin, LocalDate end) {
         Long userId = SecurityUtil.getCurrentMemberId();
         LocalDate date = begin;
         int breakfastCount = 0;
         int lunchCount = 0;
         int dinnerCount = 0;
-        while(!date.equals(end.plusDays(1))){
+        while (!date.equals(end.plusDays(1))) {
             List<Breakfast> breakfastList = breakfastRepository.findByMemberAndDate(userId, date);
             List<Lunch> lunchList = lunchRepository.findByMemberAndDate(userId, date);
             List<Dinner> dinnerList = dinnerRepository.findByMemberAndDate(userId, date);
-            if (!breakfastList.isEmpty()){
+            if (!breakfastList.isEmpty()) {
                 breakfastCount++;
             }
-            if(!lunchList.isEmpty()){
+            if (!lunchList.isEmpty()) {
                 lunchCount++;
             }
-            if(!dinnerList.isEmpty()){
+            if (!dinnerList.isEmpty()) {
                 dinnerCount++;
             }
             date = date.plusDays(1);
         }
-        int sumCount = breakfastCount+lunchCount+dinnerCount;
-        if(sumCount == 0){
+        int sumCount = breakfastCount + lunchCount + dinnerCount;
+        if (sumCount == 0) {
             return MealPortionResDto.builder()
                     .breakfast(0.00)
                     .lunch(0.00)
@@ -324,26 +376,30 @@ public class HealthService {
                     .build();
         }
         return MealPortionResDto.builder()
-                .breakfast((double)breakfastCount/sumCount)
-                .lunch((double)lunchCount/sumCount)
-                .dinner((double)dinnerCount/sumCount)
+                .breakfast((double) breakfastCount / sumCount)
+                .lunch((double) lunchCount / sumCount)
+                .dinner((double) dinnerCount / sumCount)
                 .build();
     }
 
+    /**
+     * 리포트 (식사여부) 식사여부 리스트 조회
+     * return 특정 기간 식사여부 리스트
+     * */
     @Transactional
-    public HadMealInfoResDto getHadMealInfo(LocalDate begin, LocalDate end){
+    public HadMealInfoResDto getHadMealInfo(LocalDate begin, LocalDate end) {
         Long userId = SecurityUtil.getCurrentMemberId();
         Member member = memberRepository.findById(userId).get();
-        LocalDate date= begin;
+        LocalDate date = begin;
         List<HadMealDto> breakfastList = new ArrayList<>();
         List<HadMealDto> lunchList = new ArrayList<>();
         List<HadMealDto> dinnerList = new ArrayList<>();
         int id = 1;
-        while(!date.equals(end.plusDays(1))){
+        while (!date.equals(end.plusDays(1))) {
 
             boolean breakfastIsEaten = breakfastRepository.existsByMemberAndDate(member, date);
             boolean lunchIsEaten = lunchRepository.existsByMemberAndDate(member, date);
-            boolean dinnerIsEaten = dinnerRepository.existsByMemberAndDate(member,date);
+            boolean dinnerIsEaten = dinnerRepository.existsByMemberAndDate(member, date);
 
             breakfastList.add(HadMealDto.builder().id(id).isEaten(breakfastIsEaten).date(date).build());
             lunchList.add(HadMealDto.builder().id(id).isEaten(lunchIsEaten).date(date).build());
@@ -384,55 +440,53 @@ public class HealthService {
         }
     }
 
-    private NutrientDto calculateWeekNutrient(List<NutrientInfoDto> weekNutrientInfo){
-        int carbohydrateAvg = (int)(weekNutrientInfo.stream()
+    private NutrientDto calculateWeekNutrient(List<NutrientInfoDto> weekNutrientInfo) {
+        int carbohydrateAvg = (int) (weekNutrientInfo.stream()
                 .map(NutrientInfoDto::getCarbohydrate)
+                .mapToInt(Integer::intValue)
+                .filter(v -> v != 0)
+                .average()
+                .orElse(0));
+        int proteinAvg = (int) (weekNutrientInfo.stream()
+                .map(NutrientInfoDto::getProtein)
+                .mapToInt(Integer::intValue)
+                .filter(v -> v != 0)
+                .average()
+                .orElse(0));
+        int fatSumAvg = (int) (weekNutrientInfo.stream()
+                .map(NutrientInfoDto::getFat)
                 .filter(Objects::nonNull)
                 .mapToInt(Integer::intValue)
                 .filter(v -> v != 0)
                 .average()
-                .getAsDouble());
-        int proteinAvg = (int)(weekNutrientInfo.stream()
-                .map(NutrientInfoDto::getProtein)
-                .filter(Objects::nonNull)
-                .mapToInt(Integer::intValue)
-                .filter(v -> v!=0)
-                .average()
-                .getAsDouble());
-        int fatSumAvg = (int)(weekNutrientInfo.stream()
-                .map(NutrientInfoDto::getFat)
-                .filter(Objects::nonNull)
-                .mapToInt(Integer::intValue)
-                .filter(v -> v!=0)
-                .average()
-                .getAsDouble());
-        return new NutrientDto(carbohydrateAvg,proteinAvg,fatSumAvg);
+                .orElse(0));
+        return new NutrientDto(carbohydrateAvg, proteinAvg, fatSumAvg);
 
     }
 
-    private NutrientWeekPortionDto calculateNutrientWeekPortion(List<NutrientInfoDto> weekNutrientInfo){
+    private NutrientWeekPortionDto calculateNutrientWeekPortion(List<NutrientInfoDto> weekNutrientInfo) {
         int carbohydrateSum = 0;
         int proteinSum = 0;
         int fatSum = 0;
         for (NutrientInfoDto nutrientInfoDto : weekNutrientInfo) {
-            carbohydrateSum +=nutrientInfoDto.getCarbohydrate();
+            carbohydrateSum += nutrientInfoDto.getCarbohydrate();
             proteinSum += nutrientInfoDto.getProtein();
             fatSum += nutrientInfoDto.getFat();
         }
-        int wholeNutrient = carbohydrateSum+proteinSum+fatSum;
-        if (wholeNutrient == 0){
+        int wholeNutrient = carbohydrateSum + proteinSum + fatSum;
+        if (wholeNutrient == 0) {
             return NutrientWeekPortionDto.builder()
                     .carbohydratePortion(0.00)
                     .proteinPortion(0.00)
                     .fatPortion(0.00)
                     .build();
         }
-        double carbohydratePortion = (double)carbohydrateSum/wholeNutrient;
-        double proteinPortion = (double)proteinSum/wholeNutrient;
-        double fatPortion = (double)fatSum/wholeNutrient;
-        carbohydratePortion = Double.parseDouble(String.format("%.2f",carbohydratePortion));
-        proteinPortion = Double.parseDouble(String.format("%.2f",proteinPortion));
-        fatPortion = Double.parseDouble(String.format("%.2f",fatPortion));
+        double carbohydratePortion = (double) carbohydrateSum / wholeNutrient;
+        double proteinPortion = (double) proteinSum / wholeNutrient;
+        double fatPortion = (double) fatSum / wholeNutrient;
+        carbohydratePortion = Double.parseDouble(String.format("%.2f", carbohydratePortion));
+        proteinPortion = Double.parseDouble(String.format("%.2f", proteinPortion));
+        fatPortion = Double.parseDouble(String.format("%.2f", fatPortion));
         return NutrientWeekPortionDto.builder()
                 .carbohydratePortion(carbohydratePortion)
                 .proteinPortion(proteinPortion)
