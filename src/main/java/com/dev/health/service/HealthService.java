@@ -425,12 +425,20 @@ public class HealthService {
         List<Member> members = memberRepository.findAll();
         for (Member member : members) {
             Optional<HealthStatus> yesterdayInfo = healthStatusRepository.findByMemberAndDate(member.getId(), yesterday);
-            if (yesterdayInfo.isEmpty()) {
-                continue;
+            if (yesterdayInfo.isPresent()) {
+                HealthStatus healthStatus = HealthStatus.builder()
+                        .date(today)
+                        .gender(yesterdayInfo.get().getGender())
+                        .height(yesterdayInfo.get().getHeight())
+                        .weight(yesterdayInfo.get().getWeight())
+                        .activity(yesterdayInfo.get().getActivity())
+                        .target(yesterdayInfo.get().getTarget())
+                        .build();
+                healthStatus.setMember(member);
+                healthStatus.setNeedCalorie();
+                healthStatus.setNeedNutrients();
+                healthStatusRepository.save(healthStatus);
             }
-            HealthStatus healthStatus = yesterdayInfo.get();
-            healthStatus.setDate(today);
-            healthStatusRepository.save(healthStatus);
             NutrientStatus nutrientStatus = NutrientStatus.builder()
                     .calorie(0)
                     .carbohydrate(0)
@@ -439,7 +447,9 @@ public class HealthService {
                     .date(today)
                     .build();
             nutrientStatus.setMember(member);
-            nutrientStatusRepository.save(nutrientStatus);
+            if (nutrientStatusRepository.findByMemberAndDate(member.getId(),today).isEmpty()) {
+                nutrientStatusRepository.save(nutrientStatus);
+            }
         }
     }
 
