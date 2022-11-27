@@ -126,6 +126,7 @@ public class HealthService {
                 calorie += food.getCalorie();
             }
             MealInfoDto mealInfoDto = MealInfoDto.builder()
+                    .mealId(breakfast.getId())
                     .names(menus)
                     .imgUrl(imgUrl)
                     .calorie((int) calorie)
@@ -147,6 +148,7 @@ public class HealthService {
                 calorie += food.getCalorie();
             }
             MealInfoDto mealInfoDto = MealInfoDto.builder()
+                    .mealId(lunch.getId())
                     .names(menus)
                     .imgUrl(imgUrl)
                     .calorie((int) calorie)
@@ -169,6 +171,7 @@ public class HealthService {
                 calorie += food.getCalorie();
             }
             MealInfoDto mealInfoDto = MealInfoDto.builder()
+                    .mealId(dinner.getId())
                     .names(menus)
                     .imgUrl(imgUrl)
                     .calorie((int) calorie)
