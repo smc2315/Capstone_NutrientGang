@@ -2,6 +2,7 @@ package com.dev.auth.service;
 
 import com.dev.auth.dto.LoginReqDto;
 import com.dev.auth.dto.LoginResDto;
+import com.dev.auth.dto.ReissueResDto;
 import com.dev.auth.dto.TokenReqDto;
 import com.dev.auth.entity.RefreshToken;
 import com.dev.auth.repository.RefreshTokenRepository;
@@ -98,7 +99,7 @@ public class AuthService {
     }
 
     @Transactional
-    public TokenDto reissue(TokenReqDto tokenReqDto){
+    public ReissueResDto reissue(TokenReqDto tokenReqDto){
 
         // refreshToken 검증
         if(!tokenProvider.validateToken(tokenReqDto.getRefreshToken())){
@@ -123,7 +124,9 @@ public class AuthService {
         RefreshToken newRefreshToken = refreshToken.updateValue(tokenDto.getRefreshToken());
         refreshTokenRepository.save(newRefreshToken);
 
-        return tokenDto;
+        return ReissueResDto.builder()
+                .tokenDto(tokenDto)
+                .build();
 
     }
 }
