@@ -1,6 +1,7 @@
 package com.dev.health.repository;
 
 import com.dev.health.dto.CalorieInfoDto;
+import com.dev.health.dto.NutrientCalorieInfoDto;
 import com.dev.health.dto.NutrientDto;
 import com.dev.health.dto.NutrientInfoDto;
 import com.dev.health.entity.NutrientStatus;
@@ -36,6 +37,9 @@ public interface NutrientStatusRepository extends JpaRepository<NutrientStatus,L
 
     @Query("select new com.dev.health.dto.NutrientInfoDto(n.date,n.carbohydrate,n.protein,n.fat) from NutrientStatus n where n.member.id =:memberId and n.date between :begin and :end")
     List<NutrientInfoDto> findHaveNutrientInfoByMemberAndPeriod(@Param("memberId") Long id,@Param("begin") LocalDate begin,@Param("end") LocalDate end);
+
+    @Query("select new com.dev.health.dto.NutrientCalorieInfoDto(n.calorie,n.carbohydrate,n.protein,n.fat) from NutrientStatus n where n.member.id =:memberId and n.date = :date")
+    Optional<NutrientCalorieInfoDto> findHaveNutrientCalorieInfoByMemberAndDate(@Param("memberId") Long id, @Param("date") LocalDate date);
 
 
 }

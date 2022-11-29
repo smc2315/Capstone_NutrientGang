@@ -29,4 +29,6 @@ public class Food {
     private double fat;
     @Column(name="food_index")
     private Integer index;
+    @Column(name="meal_time")
+    private String mealTime;
 }
