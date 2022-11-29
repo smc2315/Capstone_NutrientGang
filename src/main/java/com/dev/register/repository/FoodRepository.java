@@ -16,5 +16,10 @@ public interface FoodRepository extends JpaRepository<Food,Long> {
 
     Optional<List<Food>> findByCalorieLessThanAndMealTimeContaining(Double maxCalorie, String mealTime);
 
+    Optional<List<Food>> findByCalorieBetweenAndMealTimeContaining(Double minCalorie,Double maxCalorie, String mealTime);
+
     Optional<List<Food>> findByCalorieLessThanAndCarbohydrateLessThanAndProteinLessThanAndFatLessThanAndMealTimeContaining(Double calorie,Double carbohydrate,Double protein,Double fat,String mealTime);
+
+    Optional<List<Food>> findByCalorieBetweenAndCarbohydrateBetweenAndProteinBetweenAndFatBetweenAndMealTimeContaining(Double minCalorie,Double maxCalorie,Double minCarbohydrate,Double maxCarbohydrate,Double minProtein,Double maxProtein,Double minFat,Double maxFat,String mealTime);
+
 }
