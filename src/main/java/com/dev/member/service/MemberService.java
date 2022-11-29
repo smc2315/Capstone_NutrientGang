@@ -1,5 +1,6 @@
 package com.dev.member.service;
 
+import com.dev.health.repository.HealthStatusRepository;
 import com.dev.jwt.utils.SecurityUtil;
 import com.dev.member.dto.MemberResDto;
 import com.dev.member.repository.MemberRepository;

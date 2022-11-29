@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -81,6 +82,15 @@ public class HealthStatus {
 
     public void setDate(LocalDate newDate){
         this.date = newDate;
+    }
+
+    public void setInfo(int height, int weight, Gender gender ,Activity activity, Target target){
+        this.height = height;
+        this.weight = weight;
+        this.gender = gender;
+        this.activity = activity;
+        this.target = target;
+
     }
 
 
