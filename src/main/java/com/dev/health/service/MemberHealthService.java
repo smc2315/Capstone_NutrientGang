@@ -1,5 +1,6 @@
 package com.dev.health.service;
 
+import com.dev.health.dto.ForUpdateHealthStatusResDto;
 import com.dev.health.dto.UpdateMemberHealthReq;
 import com.dev.health.dto.UpdateMemberHealthRes;
 import com.dev.health.entity.HealthStatus;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -40,6 +42,24 @@ public class MemberHealthService {
 
         return UpdateMemberHealthRes.builder()
                 .date(updateMemberHealthReq.getDate())
+                .build();
+    }
+
+    @Transactional
+    public ForUpdateHealthStatusResDto getForUpdateHealthStatus(LocalDate date){
+        Long userId = SecurityUtil.getCurrentMemberId();
+        Optional<HealthStatus> findHealthStatus = healthStatusRepository.findByMemberAndDate(userId, date);
+        if (findHealthStatus.isEmpty()){
+            throw new BaseException(BaseResponseStatus.NOT_FOUND_HEALTH_STATUS);
+        }
+        HealthStatus healthStatus = findHealthStatus.get();
+        return ForUpdateHealthStatusResDto.builder()
+                .height(healthStatus.getHeight())
+                .weight(healthStatus.getWeight())
+                .gender(healthStatus.getGender())
+                .activity(healthStatus.getActivity())
+                .target(healthStatus.getTarget())
+                .date(healthStatus.getDate())
                 .build();
     }
 }
