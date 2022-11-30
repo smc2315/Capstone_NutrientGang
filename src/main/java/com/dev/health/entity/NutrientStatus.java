@@ -68,5 +68,33 @@ public class NutrientStatus {
     public void addFat(int fat){
         this.fat += fat;
     }
+
+    public void subCalorie(int calorie){
+        this.calorie -= calorie;
+        if (this.calorie < 0){
+            this.calorie = 0;
+        }
+    }
+
+    public void subCarbohydrate(int carbohydrate){
+        this.carbohydrate -= carbohydrate;
+        if (this.carbohydrate < 0){
+            this.carbohydrate = 0;
+        }
+    }
+
+    public void subProtein(int protein){
+        this.protein -= protein;
+        if (this.protein < 0){
+            this.protein = 0;
+        }
+    }
+
+    public void subFat(int fat){
+        this.fat -= fat;
+        if (this.fat < 0){
+            this.fat = 0;
+        }
+    }
 }
 

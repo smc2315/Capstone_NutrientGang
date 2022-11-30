@@ -57,6 +57,8 @@ public class Lunch {
         if(xmain!=null) {
             String stringXmain = String.valueOf(xmain);
             this.xmains.add(stringXmain);
+        }else{
+            this.xmains.add(" ");
         }
     }
 
@@ -64,6 +66,8 @@ public class Lunch {
         if(ymain != null){
             String stringYmain = String.valueOf(ymain);
             this.ymains.add(stringYmain);
+        }else{
+            this.ymains.add(" ");
         }
     }
 
