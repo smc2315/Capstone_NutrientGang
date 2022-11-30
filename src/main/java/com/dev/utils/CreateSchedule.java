@@ -27,14 +27,5 @@ public class CreateSchedule {
         }
     }
 
-    @Scheduled(cron = "0 0/1 * * * *")
-    public void testSchedule() {
-        LocalDate date = LocalDate.now();
-        LocalDateTime dateTime = LocalDateTime.now();
-        log.info("LocalDate : {}",date);
-        log.info("LocalDateTime: {}",dateTime);
-
-    }
-
 
 }
