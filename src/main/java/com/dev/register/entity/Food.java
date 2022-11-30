@@ -35,6 +35,6 @@ public class Food {
     @Column(name="meal_time")
     private String mealTime;
 
-    @OneToOne(mappedBy = "food")
-    private Menu menu;
+    @OneToMany(mappedBy = "food")
+    private List<Menu> menus = new ArrayList<>();
 }

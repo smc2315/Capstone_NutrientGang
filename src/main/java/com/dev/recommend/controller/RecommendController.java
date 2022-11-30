@@ -70,7 +70,7 @@ public class RecommendController {
     }
 
     @GetMapping("/res")
-    public BaseResponse<RestaurantListDto> getRecommendRestaurant(@RequestParam("name") String name){
+    public BaseResponse<RestaurantListDto> getRecommendRestaurant(@RequestParam("menu") String name, @RequestParam("lat") double lat, @RequestParam("lng") double lng){
         try{
             RestaurantListDto restaurant = recommendRestaurantService.findRestaurant(name);
             return new BaseResponse<>(restaurant);

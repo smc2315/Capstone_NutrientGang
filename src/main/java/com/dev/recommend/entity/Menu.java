@@ -24,7 +24,7 @@ public class Menu {
     @JoinColumn(name = "restaurant_id",nullable = false)
     private Restaurant restaurant;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "food_id",nullable = false)
     private Food food;
 
