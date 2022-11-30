@@ -48,6 +48,7 @@ public class HealthService {
     @Transactional
     public CalorieInfoResDto getCalorieInfo(LocalDate date) {
         Long userId = SecurityUtil.getCurrentMemberId();
+        log.info("유저 아이디 ==> {}",userId);
         Integer needCalorie = healthStatusRepository.findNeedCalorieByMemberAndDate(userId, date);
         if (needCalorie == null) {
             throw new BaseException(BaseResponseStatus.NOT_FOUND_HEALTH_STATUS);
