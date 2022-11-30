@@ -1,9 +1,12 @@
 package com.dev.register.entity;
 
+import com.dev.recommend.entity.Menu;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "food")
@@ -31,4 +34,7 @@ public class Food {
     private Integer index;
     @Column(name="meal_time")
     private String mealTime;
+
+    @OneToOne(mappedBy = "food")
+    private Menu menu;
 }

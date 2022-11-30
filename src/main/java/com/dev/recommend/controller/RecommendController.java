@@ -1,6 +1,10 @@
 package com.dev.recommend.controller;
 
+import com.dev.recommend.dto.RestaurantDto;
+import com.dev.recommend.dto.RestaurantListDto;
+import com.dev.recommend.entity.Restaurant;
 import com.dev.recommend.service.RecommendFoodService;
+import com.dev.recommend.service.RecommendRestaurantService;
 import com.dev.register.dto.FoodListDto;
 import com.dev.utils.response.BaseException;
 import com.dev.utils.response.BaseResponse;
@@ -13,13 +17,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @RestController
 @RequestMapping("/rcn")
 @RequiredArgsConstructor
 @Slf4j
 public class RecommendController {
-    private final RecommendFoodService recommendService;
+    private final RecommendFoodService recommendFoodService;
+    private final RecommendRestaurantService recommendRestaurantService;
 
     @GetMapping("/menu")
     public BaseResponse<FoodListDto> getRecommend(@RequestParam("meal") String meal, @RequestParam("date") String date){
@@ -27,13 +33,13 @@ public class RecommendController {
             LocalDate parseDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             FoodListDto recommend;
             if(meal.equals("breakfast")) {
-                recommend = recommendService.getRecommendBreakfast(parseDate);
+                recommend = recommendFoodService.getRecommendBreakfast(parseDate);
             }
             else if(meal.equals("lunch")) {
-                recommend = recommendService.getRecommendLunch(parseDate);
+                recommend = recommendFoodService.getRecommendLunch(parseDate);
             }
             else {
-                recommend = recommendService.getRecommendDinner(parseDate);
+                recommend = recommendFoodService.getRecommendDinner(parseDate);
             }
             return new BaseResponse<>(recommend);
         }catch(BaseException exception){
@@ -45,7 +51,7 @@ public class RecommendController {
     public BaseResponse<FoodListDto> getRecommendLunch(@RequestParam("date") String date){
         try{
             LocalDate parseDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            FoodListDto recommendLunch = recommendService.getRecommendLunch(parseDate);
+            FoodListDto recommendLunch = recommendFoodService.getRecommendLunch(parseDate);
             return new BaseResponse<>(recommendLunch);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
@@ -56,8 +62,18 @@ public class RecommendController {
     public BaseResponse<FoodListDto> getRecommendDinner(@RequestParam("date") String date){
         try{
             LocalDate parseDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            FoodListDto recommendDinner = recommendService.getRecommendDinner(parseDate);
+            FoodListDto recommendDinner = recommendFoodService.getRecommendDinner(parseDate);
             return new BaseResponse<>(recommendDinner);
+        }catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    @GetMapping("/res")
+    public BaseResponse<RestaurantListDto> getRecommendRestaurant(@RequestParam("name") String name){
+        try{
+            RestaurantListDto restaurant = recommendRestaurantService.findRestaurant(name);
+            return new BaseResponse<>(restaurant);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }

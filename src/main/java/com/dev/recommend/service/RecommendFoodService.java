@@ -2,6 +2,8 @@ package com.dev.recommend.service;
 
 
 import com.dev.health.dto.*;
+import com.dev.health.entity.HealthStatus;
+import com.dev.health.entity.Target;
 import com.dev.health.repository.HealthStatusRepository;
 import com.dev.health.repository.NutrientStatusRepository;
 import com.dev.jwt.utils.SecurityUtil;
@@ -18,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
+
+import static com.dev.utils.response.BaseResponseStatus.NOT_FOUND_USER;
 
 @Service
 @RequiredArgsConstructor
@@ -72,6 +76,11 @@ public class RecommendFoodService {
 
     }
 
+    private Optional<HealthStatus> getMemberType(LocalDate date){
+        Long userId = SecurityUtil.getCurrentMemberId();
+        return healthStatusRepository.findTargetByMember_IdAndDate(userId,date);
+    }
+
     @Transactional
     public FoodListDto getRecommendBreakfast(LocalDate date){
 //        CalorieInfoResDto calorieInfo = getCalorieInfo(date);
@@ -81,7 +90,6 @@ public class RecommendFoodService {
 
         //Optional<List<Food>> foods = foodRepository.findByCalorieBetween(minBreakfastNeedCalorie, maxBreakfastNeedCalorie);
         Optional<List<Food>> foods = breakfastRecommendAlgorithm(date);
-        log.info("{}",foods.get().get(0).getName());
         if(foods.get().isEmpty()){
             throw new BaseException(BaseResponseStatus.NOT_FOUND_FOOD);
         }
@@ -167,21 +175,49 @@ public class RecommendFoodService {
 
     }
     private Optional<List<Food>> breakfastRecommendAlgorithm(LocalDate date){
+        Optional<HealthStatus> type = getMemberType(date);
+        if(type.isEmpty()){
+            throw new BaseException(NOT_FOUND_USER);
+        }
         CalorieInfoResDto calorieInfo = getCalorieInfo(date);
         int needCalorie = calorieInfo.getNeedCalorie();
+        log.info("{}",type.get().getTarget().name());
+        if(type.get().getTarget().name()=="GAIN_MUSCLE"){
+            Double minCalorie = (double)needCalorie/3-500;
+            Double maxCalorie = (double)needCalorie/3+300;
+
+            return foodRepository.findByCalorieBetweenAndMealTimeContaining(minCalorie,maxCalorie,"breakfast");
+        }
+
         Double maxCalorie = (double)needCalorie/3;
         return foodRepository.findByCalorieLessThanAndMealTimeContaining(maxCalorie, "breakfast");
 
     }
 
     private Optional<List<Food>> lunchRecommendAlgorithm(LocalDate date){
+
+        Optional<HealthStatus> type = getMemberType(date);
+        if(type.isEmpty()){
+            throw new BaseException(NOT_FOUND_USER);
+        }
+
         CalorieInfoResDto calorieInfo = getCalorieInfo(date);
         NutrientStatusInfoResDto nutrientInfo = getNutrientInfo(date);
         NutrientDto needNutrient = nutrientInfo.getNeedNutrient();
         NutrientDto haveNutrient = nutrientInfo.getHaveNutrient();
         int needCalorie = calorieInfo.getNeedCalorie();
         int haveCalorie = calorieInfo.getHaveCalorie();
-        log.info("{}",haveCalorie);
+        if(type.get().getTarget().name().equals("GAIN_MUSCLE")) {
+            if (haveCalorie == 0) {
+                Double minCalorie = (double) needCalorie / 3 - 300;
+                Double maxCalorie = (double) needCalorie / 3 + 300;
+                return foodRepository.findByCalorieBetweenAndMealTimeContaining(minCalorie, maxCalorie, "lunch");
+            }
+            double minFoodCal = (double)(needCalorie-haveCalorie)/2-300;
+            double maxFoodCal = (double)(needCalorie-haveCalorie)/2+300;
+
+            return foodRepository.findByCalorieBetweenAndMealTimeContaining(minFoodCal,maxFoodCal,"lunch");
+        }
         if(haveCalorie == 0){
             Double maxCalorie = (double)needCalorie/3;
 
