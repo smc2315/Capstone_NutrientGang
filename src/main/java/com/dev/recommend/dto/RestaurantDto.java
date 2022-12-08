@@ -17,8 +17,8 @@ public class RestaurantDto {
     private String rtrName;
     private String rtrImgURL;
     private String rtrLocation;
-    private double rtrLat;
-    private double rtrLng;
+    private double rtrlat;
+    private double rtrlng;
     private List<MenuDto> rtrMenu;
 
 }
