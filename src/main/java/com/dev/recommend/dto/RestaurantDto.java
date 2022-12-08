@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RestaurantDto {
+    private int rtrIndex;
     private String rtrName;
     private String rtrImgURL;
     private String rtrLocation;
