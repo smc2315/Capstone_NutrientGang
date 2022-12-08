@@ -1,4 +1,4 @@
-server: 8080
+server: 3000
 
 spring:
   profiles:
