@@ -2,6 +2,7 @@ package com.dev.auth.controller;
 
 import com.dev.auth.dto.LoginReqDto;
 import com.dev.auth.dto.LoginResDto;
+import com.dev.auth.dto.ReissueResDto;
 import com.dev.auth.dto.TokenReqDto;
 import com.dev.auth.service.AuthService;
 import com.dev.jwt.dto.TokenDto;
@@ -43,10 +44,10 @@ public class AuthController {
     }
 
     @PostMapping("/reissue")
-    public BaseResponse<TokenDto> reissue(@RequestBody TokenReqDto tokenReqDto){
+    public BaseResponse<ReissueResDto> reissue(@RequestBody TokenReqDto tokenReqDto){
         try{
-            TokenDto tokenDto = authService.reissue(tokenReqDto);
-            return new BaseResponse<>(tokenDto);
+            ReissueResDto reissue = authService.reissue(tokenReqDto);
+            return new BaseResponse<>(reissue);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }

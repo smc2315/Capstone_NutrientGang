@@ -7,10 +7,10 @@ spring:
       on-profile: dev
 
   datasource:
-    url: jdbc:mysql:aurora://database-2-instance-1.cjnvttft5wgb.ap-northeast-2.rds.amazonaws.com:3306/capstone?serverTimeZone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://database-1.cjnvttft5wgb.ap-northeast-2.rds.amazonaws.com:3306/capstone?serverTimeZone=Asia/Seoul&characterEncoding=UTF-8
     username: admin
     password: Duddidrod123!
-    driver-class-name: org.mariadb.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:

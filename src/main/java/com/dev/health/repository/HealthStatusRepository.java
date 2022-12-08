@@ -4,12 +4,12 @@ import com.dev.health.dto.NutrientDto;
 import com.dev.health.dto.NutrientInfoDto;
 import com.dev.health.dto.WeightInfoDto;
 import com.dev.health.entity.HealthStatus;
+import com.dev.health.entity.Target;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,4 +31,5 @@ public interface HealthStatusRepository extends JpaRepository<HealthStatus,Long>
     @Query("select new com.dev.health.dto.NutrientInfoDto(h.date,h.needCarbohydrate,h.needProtein,h.needFat) from HealthStatus h where h.member.id=:memberId and h.date between :begin and :end")
     List<NutrientInfoDto> findNeedNutrientInfoByMemberAndPeriod(@Param("memberId") Long id, @Param("begin") LocalDate begin,@Param("end") LocalDate end);
 
+    Optional<HealthStatus> findTargetByMember_IdAndDate(Long id, LocalDate date);
 }

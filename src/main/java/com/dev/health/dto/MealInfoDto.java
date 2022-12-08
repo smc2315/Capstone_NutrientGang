@@ -10,6 +10,7 @@ import java.util.List;
 @Setter
 @Builder
 public class MealInfoDto {
+    private long mealId;
     private List<String> names;
     private String imgUrl;
     private int calorie;
